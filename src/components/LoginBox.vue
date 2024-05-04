@@ -17,12 +17,15 @@
           <button class="button is-light" type="button" @click="goToSignUp"><p class="has-text-weight-semibold">회원가입</p></button>
       </div>
   </form>
-  <div v-else>
-      <p>{{ userName }}님 환영합니다!</p>
-      <button class="button is-primary" @click="createRoom">방 만들기</button>
-      <button class="button is-info" @click="createCharacter">캐릭터 만들기</button>
-      <button class="button is-light" @click="logout">로그아웃</button>
-  </div> <!-- 이것은 올바른 닫는 태그입니다. -->
+  <div v-else class="login-success">
+    <p>{{ userName }}님 환영합니다!</p>
+    <div class="buttons is-centered">
+        <button class="button is-primary" @click="createRoom">방 생성</button>
+        <button class="button is-info" @click="createCharacter">캐릭터 생성</button>
+        <button class="button is-light" @click="logout">로그아웃</button>
+    </div>
+</div>
+
 </template>
 
 <script>
@@ -64,7 +67,11 @@ export default {
       }).catch((err) => {
         console.error("로그아웃 에러: ", err.message); // 에러 처리
       });
+    },
+    goToSignUp() {
+      this.$router.push({ name: 'sign' });
     }
+
   },
   mounted() {
     const auth = getAuth();
