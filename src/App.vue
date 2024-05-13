@@ -1,19 +1,25 @@
 <template>
-  <section class="head">
+  <div class="is-flex is-flex-direction-column is-justify-content-space-between" style="min-height: 100vh;">
     <NavbarTop></NavbarTop>
     <div class="background-panel has-background-warning-70"></div>
-  </section>
+    
+    <!-- Content container might be needed for proper spacing -->
+    <div class="is-flex-grow-1">
+      <router-view class="mt-5"/>
+    </div>
 
-
-  <router-view class="mt-5"/>
+    <FooterBottom class="mt-5"/>
+  </div>
 </template>
 
 <script>
 import NavbarTop from "@/components/NavbarTop.vue";
+import FooterBottom from "@/components/FooterBottom.vue";
 export default {
   name: 'App',
   components: {
-    NavbarTop
+    NavbarTop,
+    FooterBottom
   }
 }
 
@@ -31,6 +37,7 @@ export default {
 }
 body{
   font-family:'Pretendard-Regular';
+  
 }
 .background-panel{
   width: 100%;
@@ -39,9 +46,8 @@ body{
   position: absolute;
   z-index: -1;
 }
-/* nav a.router-link-exact-active {
-  
-} */
-
-
+.panel{
+    background-color: white;
+    box-shadow: 0 8px 8px 0 rgba(0,0,0,.1);
+  }
 </style>

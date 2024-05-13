@@ -1,9 +1,6 @@
 <template>
     <nav class="navbar is-warning has-background-warning-65">
-        <div class="navbar-brand">
-          
-        </div>
-
+      
 
         <div class="navbar-menu">
           <router-link to="/" style="width: 164.07px;">
@@ -15,28 +12,25 @@
             
           
             <router-link to="/" class="navbar-item pl-4 is-size-5 has-text-dark has-text-weight-bold">홈</router-link>
-            <router-link to="/user" class="navbar-item pl-4 is-size-5 has-text-dark has-text-weight-bold">유저</router-link>
-            <router-link to="/test" class="navbar-item pl-4 is-size-5 has-text-dark has-text-weight-bold">테스트</router-link>
+            <router-link to="/RoomSetting" class="navbar-item pl-4 is-size-5 has-text-dark has-text-weight-bold">방 만들기</router-link>
+            <router-link to="/Friend" class="navbar-item pl-4 is-size-5 has-text-dark has-text-weight-bold">친구</router-link>
+            <router-link to="/UserSetting" class="navbar-item pl-4 is-size-5 has-text-dark has-text-weight-bold">설정</router-link>
         </div>
-        <div class="navbar-end ">
+        <div class="navbar-end">
           <div class="navbar-item">
-            <div class="field is-grouped">
-              <p class="control">
-                <a class="button">
-                  <span class="icon">
-                    <i class="fa-brands fa-twitter"></i>
-                  </span>
-                  <span class="has-text-weight-semibold">트위터</span>
-                </a>
-              </p>
-              <p class="control">
-                <a class="button">
-                  <span class="icon">
-                    <i class="fa-solid fa-download"></i>
-                  </span>
-                  <span class="has-text-weight-semibold">다운로드</span>
-                </a>
-              </p>
+            <div class="field is-grouped"> 
+              <a class="button">
+                <span class="icon">
+                  <i class="fa-brands fa-twitter"></i>
+                </span>
+                <span class="has-text-weight-semibold">트위터</span>
+              </a>
+              <a class="button">
+                <span class="icon">
+                  <i class="fa-solid fa-download"></i>
+                </span>
+                <span class="has-text-weight-semibold">다운로드</span>
+              </a>
             </div>
           </div>
 

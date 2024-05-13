@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
-import TestView from '@/views/TestView.vue'
-import UserView from '@/views/UserView.vue'
+import RoomSettingView from '@/views/RoomSettingView.vue'
+import UserSettingView from '@/views/UserSettingView.vue'
+import CreateAccountView from '@/views/CreateAccountView.vue'
+import FriendView from '@/views/FriendView.vue'
+
 
 const routes = [
   {
@@ -10,16 +13,25 @@ const routes = [
     component: HomeView
   },
   {
-    path: '/user',
-    name: 'user',
-    component: UserView
+    path: '/RoomSetting',
+    name: 'roomSetting',
+    component: RoomSettingView
   },
   {
-    path: '/test',
-    name: 'test',
-    component: TestView
+    path: '/UserSetting',
+    name: 'userSetting',
+    component: UserSettingView
   },
- 
+  {
+    path:'/CreateAccount',
+    name: 'createAccount',
+    component: CreateAccountView
+  },
+  {
+    path:'/Friend',
+    name: 'friend',
+    component: FriendView
+  },
 ]
 
 const router = createRouter({

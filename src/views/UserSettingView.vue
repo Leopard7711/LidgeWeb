@@ -1,18 +1,18 @@
 <template>
-  <div class="test">
+  <section class="mainSection">
     <div class="container is-max-desktop">
       
       <div class="box">
         
-
+        
 
       </div>
     </div>
-  </div>
+  </section>
 </template>
 <script>
 export default {
-  name: 'TestView',
+  name: 'UserSettingView',
   components: {
     
   }
