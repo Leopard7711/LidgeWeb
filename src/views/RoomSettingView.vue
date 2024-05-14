@@ -25,6 +25,11 @@
         <div class="panel pb-4">
           <p class="panel-heading"><span class="has-text-weight-semibold">추가된 친구</span></p>
           <div class="list friend-list">
+            <div v-if="joinedFriends.length === 0" class="is-flex is-align-items-center" style="height: 100%;">
+              <div class="is-flex-grow-1">
+                <p class="is-size-5 has-text-grey">친구를 추가해주세요</p>
+              </div>
+            </div>
             <div class="list-item ml-2 mr-2 is-flex is-align-items-center is-justify-content-space-between" v-for="friend in joinedFriends" :key="friend.id">
               <div class="is-flex is-align-items-center">
                 <figure class="image is-64x64">
@@ -95,17 +100,17 @@ export default {
     const isCheckingAuth = ref(true);
 
     const checkUserAndRedirect = (user) => {
-     if (user) {
-       currentUserUid.value = user.uid;
-       fetchFriends();
-     } else {
-       if (isCheckingAuth.value) {
-         alert('로그인 해주세요');
-         router.push('/');
-       }
-     }
-     isCheckingAuth.value = false;
-   };
+      if (user) {
+        currentUserUid.value = user.uid;
+        fetchFriends();
+      } else {
+        if (isCheckingAuth.value) {
+          alert('로그인 해주세요');
+          router.push('/');
+        }
+      }
+      isCheckingAuth.value = false;
+    };
 
     const availableFriends = computed(() => {
       return friends.value.filter(friend => !joinedFriends.value.some(joinedFriend => joinedFriend.id === friend.id));
@@ -209,16 +214,10 @@ export default {
     };
 
     onMounted(() => {
-     const user = auth.currentUser;
-     checkUserAndRedirect(user);
-
-     const unsubscribe = onAuthStateChanged(auth, user => {
-       checkUserAndRedirect(user);
-     });
-
-     // Clean up the subscription on unmount
-     return () => unsubscribe();
-   });
+      onAuthStateChanged(auth, (user) => {
+        checkUserAndRedirect(user);
+      });
+    });
 
     return {
       roomName,
@@ -240,6 +239,6 @@ export default {
 <style scoped> 
 .friend-list{
   overflow-y:scroll; 
-  height:400px; 
+  height:500px; 
 }
 </style>

@@ -27,7 +27,7 @@
 
 <script>
 import { auth } from '@/firebase'; 
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword} from 'firebase/auth';
 
 export default {
   name: 'LoginBox',
@@ -47,15 +47,6 @@ export default {
               .catch((error) => {
                   console.error("Login failed", error);
                   alert("입력하신 정보가 잘못되었습니다");
-              });
-      },
-      logout() {
-          signOut(auth)
-              .then(() => {
-                  console.log("Logged out successfully");
-              })
-              .catch((error) => {
-                  console.error("Logout failed", error);
               });
       }
   }

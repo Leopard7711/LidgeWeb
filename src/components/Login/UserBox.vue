@@ -8,24 +8,36 @@
   </template>
   
   <script>
-  import { auth } from '@/firebase';
-  import { signOut } from 'firebase/auth';
-  
-  export default {
-    name: 'UserBox',
-    computed: {
-      userName() {
-        return auth.currentUser ? auth.currentUser.displayName || auth.currentUser.email : '';
-      }
-    },
-    methods: {
-      logout() {
-        signOut(auth).then(() => {
+import { auth } from '@/firebase';
+import { signOut } from 'firebase/auth';
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+
+export default {
+  name: 'UserBox',
+  setup() {
+    const router = useRouter();
+
+    const userName = computed(() => {
+      return auth.currentUser ? auth.currentUser.displayName || auth.currentUser.email : '';
+    });
+
+    const logout = () => {
+      signOut(auth)
+        .then(() => {
           console.log('Logged out successfully');
-        }).catch((error) => {
+          alert('로그아웃 되었습니다');
+          router.go(0);
+        })
+        .catch((error) => {
           console.error('Logout failed', error);
         });
-      }
-    }
-  }
-  </script>
+    };
+
+    return {
+      userName,
+      logout,
+    };
+  },
+};
+</script>

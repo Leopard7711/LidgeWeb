@@ -1,23 +1,27 @@
 <template>
-    <div>
-      <p class="has-text-weight-bold">친구 목록</p>
-      <div class="list mt-1">
-        <div v-for="friend in friends" :key="friend.id" class="list-item is-flex is-align-items-center is-justify-content-space-between">
-          <div class="is-flex is-align-items-center ">
-            <figure class="image is-32x32">
-              <img class="is-rounded" :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=User'" alt="Friend Image">
-            </figure>
-          </div>
-          <p class="ml-3 has-text-weight-semibold">{{ friend.name }}</p>
-          <button class="delete" @click="deleteFriend(friend.id)"></button>
-        </div>
+
+    <p class="has-text-weight-bold">친구 목록</p>
+    <div v-if="friends.length === 0" class="is-flex is-align-items-center" style="height: 100%;">
+      <div class="is-flex-grow-1">
+        <p class="is-size-5 has-text-grey">로그인 해주세요</p>
       </div>
     </div>
-  </template>
+    <div v-else class="list mt-1 " style="width: 100%;">
+      <div v-for="friend in friends" :key="friend.id" class="list-item is-flex is-align-items-center is-justify-content-space-between">
+        <div class="is-flex is-align-items-center">
+          <figure class="image is-32x32">
+            <img class="is-rounded" :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=User'" alt="Friend Image">
+          </figure>
+        </div>
+        <p class="ml-3 has-text-weight-semibold">{{ friend.name }}</p>
+        <button class="delete" @click="deleteFriend(friend.id)"></button>
+      </div>
+    </div>
+</template>
   
   <script>
   import { ref , onMounted, onUnmounted} from 'vue';
-  import { db, auth } from '@/firebase'; // Adjust this import according to your setup
+  import { db, auth } from '@/firebase'; 
   import { collection, query, where, getDocs, doc, deleteDoc,getDoc } from 'firebase/firestore';
   
   export default {

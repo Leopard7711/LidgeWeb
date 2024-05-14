@@ -1,75 +1,92 @@
 <template>
-    <div class="container is-max-desktop">
-        <div class="panel pb-4">
-            <p class="panel-heading"><span class="has-text-weight-semibold">친구 검색</span></p>
-            <div class="panel-block">
-                <p class="control has-icons-left">
-                <input class="input" type="text" placeholder="친구 검색" v-model="searchText">
-                <span class="icon is-left">
-                    <i class="fas fa-search" aria-hidden="true"></i>
-                </span>
-                </p>
-            </div>
-            <!-- 모든 유저 리스트 -->
-            <div class="list user-list">
-                    <div class="list-item ml-4 mr-4" v-for="user in filteredUsers" :key="user.id">
-                        <div class="list-item-image">
-                            <figure class="image is-64x64">
-                                <img class="is-rounded" src="https://via.placeholder.com/128x128.png?text=Image">
-                            </figure>
-                        </div>
-                        <div class="list-item-content">
-                            <div class="list-item-title is-size-5 has-text-weight-semibold" >{{ user.name }}</div>
-                            <div class="list-item-description">{{user.email}}</div>
-                        </div>
-                        <button class="button is-primary ml-2" @click="sendFriendRequest(user.id)">
-                            <p class="has-text-weight-semibold">친구 요청</p></button>
-                    </div>
-                </div>
-        </div>
-      <div class="columns">
-        <div class="column">
-            <div class="panel pb-4">
-                <p class="panel-heading"><span class="has-text-weight-semibold">친구 리스트</span></p>
-                <div class="list friend-list">
-                    <div class="list-item ml-2 mr-2 is-flex is-align-items-center is-justify-content-space-between" v-for="friend in friends" :key="friend.id">
-                        <div class="is-flex is-align-items-center">
-                            <figure class="image is-64x64">
-                            <img class="is-rounded" :src="'https://via.placeholder.com/128x128.png?text=Image'">
-                            </figure>
-                        </div>
+    <div class="container is-max-desktop mt-5">
+   
 
-                        <div class="list-item-content">
-                            <div class="list-item-title is-size-5 has-text-weight-semibold">{{ friend.name }}</div>
-                            <div class="list-item-description">{{ friend.email }}</div>
-                        </div>
-                        <button class="delete" @click="deleteFriend(friend.id)"></button>
-                    </div>
-                </div>
+       
+      <div class="panel pb-4">
+        <p class="panel-heading"><span class="has-text-weight-semibold">친구 검색</span></p>
+        <div class="panel-block">
+          <p class="control has-icons-left">
+            <input class="input" type="text" placeholder="친구 검색" v-model="searchText">
+            <span class="icon is-left">
+              <i class="fas fa-search" aria-hidden="true"></i>
+            </span>
+          </p>
+        </div>
+        
+        <!-- 모든 유저 리스트 -->
+        <div class="list user-list is-flex is-justify-content-center">
+          <div v-if="filteredUsers.length === 0" class="has-text-grey ">
+            <p class="is-size-5">찾을 유저의 이름을 입력해주세요</p>
+          </div>
+          <div class="list-item ml-4 mr-4" v-for="user in filteredUsers" :key="user.id">
+            <div class="list-item-image">
+              <figure class="image is-64x64">
+                <img class="is-rounded" src="https://via.placeholder.com/128x128.png?text=Image">
+              </figure>
             </div>
+            <div class="list-item-content">
+              <div class="list-item-title is-size-5 has-text-weight-semibold">{{ user.name }}</div>
+              <div class="list-item-description">{{ user.email }}</div>
+            </div>
+            <button class="button is-primary ml-2" @click="sendFriendRequest(user.id)">
+              <p class="has-text-weight-semibold">친구 요청</p>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    
+
+     <div class="columns ">
+        <div class="column">
+          <div class="panel pb-4">
+            <p class="panel-heading"><span class="has-text-weight-semibold">친구 리스트</span></p>
+            <div class="list friend-list is-flex is-justify-content-center">
+              <div v-if="friends.length === 0" class="has-text-grey ">
+                <p  class="is-size-5">친구가 없습니다</p>
+              </div>
+              <div class="list-item ml-2 mr-2 is-flex is-align-items-center is-justify-content-space-between" v-for="friend in friends" :key="friend.id">
+                <div class="is-flex is-align-items-center">
+                  <figure class="image is-64x64">
+                    <img class="is-rounded" :src="'https://via.placeholder.com/128x128.png?text=Image'">
+                  </figure>
+                </div>
+                <div class="list-item-content">
+                  <div class="list-item-title is-size-5 has-text-weight-semibold">{{ friend.name }}</div>
+                  <div class="list-item-description">{{ friend.email }}</div>
+                </div>
+                <button class="delete" @click="deleteFriend(friend.id)"></button>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="column">
-            <div class="panel pb-4">
-                <p class="panel-heading"><span class="has-text-weight-semibold">친구 요청</span></p>
-                <div class="list friend-request-list">
-                    <div class="list-item ml-2 mr-2" v-for="request in incomingRequests" :key="request.id">
-                        <div class="list-item-image">
-                            <figure class="image is-64x64">
-                                <img class="is-rounded" :src="'https://via.placeholder.com/128x128.png?text=Image'">
-                            </figure>
-                        </div>
-                        <div class="list-item-content">
-                            <div class="list-item-title is-size-5 has-text-weight-semibold">{{request.senderName}}</div>
-                            <div class="list-item-description">{{ request.senderEmail }}</div>
-                        </div>
-                        <button class="button is-danger ml-2" @click="acceptRequest(request.id)">수락</button>
-                        <button class="button is-light ml-2" @click="declineRequest(request.id)">거절</button>
-                    </div>
+          <div class="panel pb-4">
+            <p class="panel-heading"><span class="has-text-weight-semibold">친구 요청</span></p>
+            <div class="list friend-request-list is-flex is-justify-content-center ">
+              <div v-if="incomingRequests.length === 0" class=" has-text-grey">
+                <p  class="is-size-5 ">친구 요청이 없습니다</p>
+              </div>
+              <div class="list-item ml-2 mr-2" v-for="request in incomingRequests" :key="request.id">
+                <div class="list-item-image">
+                  <figure class="image is-64x64">
+                    <img class="is-rounded" :src="'https://via.placeholder.com/128x128.png?text=Image'">
+                  </figure>
                 </div>
+                <div class="list-item-content">
+                  <div class="list-item-title is-size-5 has-text-weight-semibold">{{ request.senderName }}</div>
+                  <div class="list-item-description">{{ request.senderEmail }}</div>
+                </div>
+                <button class="button is-danger ml-2" @click="acceptRequest(request.id)">수락</button>
+                <button class="button is-light ml-2" @click="declineRequest(request.id)">거절</button>
+              </div>
             </div>
+          </div>
+        </div>
       </div>
-    </div>
-    </div>
+    </div> 
+   
   </template>
   
   <script>
@@ -333,11 +350,11 @@ export default {
     }
     .friend-list{
     overflow-y:scroll; 
-    height:400px; 
+    height: 400px;
     }
     .friend-request-list{
     overflow-y:scroll; 
-    height:400px; 
+    height: 400px;
     }
 
 </style>

@@ -1,6 +1,7 @@
 <template>
   
-  <div class="container is-max-desktop">
+  <div class="container is-max-desktop static-height">
+    
     <div class="columns">
       <div class="column is-8">
         <div class="panel pb-4">
@@ -26,7 +27,7 @@
         vitae vero, minima obcaecati molestiae eveniet distinctio magnam esse, sit iure veniam!
       </p>
       </div>
-    <div class="panel ">
+    <div class="panel">
       <p class="panel-heading">공지사항</p>
       <p class="px-4 py-4">
         Lorem ipsum, dolor sit amet consectetur adipisicing elit.
@@ -34,45 +35,49 @@
         vitae vero, minima obcaecati molestiae eveniet distinctio magnam esse, sit iure veniam!
       </p>
     </div>
-  </div>
 
+</div>
 
 </template>
 
 <script>
- import { ref, onMounted } from 'vue';
-   import LoginBox from "@/components/Login/LoginBox.vue"; 
-   import UserBox from "@/components/Login/UserBox.vue"; 
-   import RoomList from "@/components/RoomList.vue"; 
-   import FriendList from "@/components/FriendList.vue"; 
-   import { auth } from '@/firebase'; 
-   import { onAuthStateChanged } from 'firebase/auth';
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { auth } from '@/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import LoginBox from "@/components/Login/LoginBox.vue"; 
+import UserBox from "@/components/Login/UserBox.vue"; 
+import RoomList from "@/components/RoomList.vue"; 
+import FriendList from "@/components/FriendList.vue";
 
-   export default { 
-     name: 'HomeView', 
-     components: { 
-       LoginBox, 
-       UserBox, 
-       RoomList, 
-       FriendList 
-     }, 
-     setup() {
-       const isLoggedIn = ref(false);
+export default {
+  name: 'HomeView',
+  components: {
+    LoginBox,
+    UserBox,
+    RoomList,
+    FriendList
+  },
+  setup() {
+    const isLoggedIn = ref(false);
+    const router = useRouter();
 
-       onMounted(() => {
-         const unsubscribe = onAuthStateChanged(auth, (user) => {
-           isLoggedIn.value = !!user;
-         });
+    onMounted(() => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          isLoggedIn.value = true;
+        } else {
+          isLoggedIn.value = false;
+          router.push('/'); // 로그인 페이지로 리다이렉트
+        }
+      });
+    });
 
-         // Clean up the subscription on unmount
-         return () => unsubscribe();
-       });
-       
-       return {
-         isLoggedIn
-       };
-     }
-   };
+    return {
+      isLoggedIn
+    };
+  }
+};
 </script>
 <style scoped>
   .box.is-flex-grow-1 {
