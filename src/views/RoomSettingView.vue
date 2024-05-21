@@ -8,10 +8,10 @@
         <div class="control">
           <input class="input" type="text" placeholder="방 이름" v-model="roomName">
           <input class="input mt-2" type="password" placeholder="방 비밀번호 (선택)" v-model="roomPassword">
-          <button class="button is-primary mt-2" @click="createRoom">
+          <button class="button is-primary mt-3" @click="createRoom">
             <span class="has-text-weight-semibold">방 생성</span>
           </button>
-          <button class="button is-light mt-2 ml-3" @click="removeRoom">
+          <button class="button is-light mt-3 ml-3" @click="removeRoom">
             <span class="has-text-weight-semibold">만들어 놓은 방 지우기</span>
           </button>
         </div>
@@ -24,16 +24,17 @@
       <div class="column">
         <div class="panel pb-4">
           <p class="panel-heading"><span class="has-text-weight-semibold">추가된 친구</span></p>
-          <div class="list friend-list">
-            <div v-if="joinedFriends.length === 0" class="is-flex is-align-items-center" style="height: 100%;">
-              <div class="is-flex-grow-1">
-                <p class="is-size-5 has-text-grey">친구를 추가해주세요</p>
-              </div>
+
+          <div v-if="joinedFriends.length === 0" class="is-flex friend-list is-align-items-center">
+            <div class="is-flex-grow-1">
+              <p class="is-size-5 has-text-grey">친구를 추가해주세요</p>
             </div>
+          </div>
+          <div v-else class="list friend-list">
             <div class="list-item ml-2 mr-2 is-flex is-align-items-center is-justify-content-space-between" v-for="friend in joinedFriends" :key="friend.id">
               <div class="is-flex is-align-items-center">
                 <figure class="image is-64x64">
-                  <img class="is-rounded" :src="'https://via.placeholder.com/128x128.png?text=Image'">
+                  <img class="is-rounded friend-image" :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
                 </figure>
               </div>
               <div class="list-item-content">
@@ -49,15 +50,20 @@
       <div class="column">
         <div class="panel pb-4">
           <p class="panel-heading"><span class="has-text-weight-semibold">친구 목록</span></p>
-          <div class="list friend-list">
+          <div v-if="availableFriends.length === 0" class="is-flex friend-list is-align-items-center">
+            <div class="is-flex-grow-1">
+              <p class="is-size-5 has-text-grey">친구가 없습니다</p>
+            </div>
+          </div>
+          <div v-else class="list friend-list">
             <div class="list-item ml-2 mr-2" v-for="friend in availableFriends" :key="friend.id">
               <div class="list-item-image">
                 <figure class="image is-64x64">
-                  <img class="is-rounded" :src="'https://via.placeholder.com/128x128.png?text=Image'">
+                  <img class="is-rounded friend-image" :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
                 </figure>
               </div>
               <div class="list-item-content">
-                <div class="list-item-title is-size-5 has-text-weight-semibold">{{friend.name}}</div>
+                <div class="list-item-title is-size-5 has-text-weight-semibold">{{ friend.name }}</div>
                 <div class="list-item-description">{{ friend.email }}</div>
               </div>
               <button class="button is-danger ml-2" @click="inviteFriendToRoom(friend.id)">추가</button>
@@ -138,7 +144,8 @@ export default {
           return {
             id: friendId,
             name: userDocSnapshot.data().name,
-            email: userDocSnapshot.data().email
+            email: userDocSnapshot.data().email,
+            photoURL: userDocSnapshot.data().photoURL || ''
           };
         }
         return null;
@@ -165,7 +172,7 @@ export default {
         alert('방 이름을 입력해주세요.');
         return;
       }
-      console.log('selectedFriends.value:', selectedFriends.value);
+
       await addDoc(collection(db, 'rooms'), {
         name: roomName.value,
         password: roomPassword.value || "",
@@ -209,7 +216,7 @@ export default {
 
     const removeFriendFromRoom = friendId => {
       joinedFriends.value = joinedFriends.value.filter(f => f.id !== friendId);
-      selectedFriends.value = selectedFriends.value.filter(id => id !== friendId);
+      selectedFriends.value = selectedFriends.value.filter(friend => friend.id !== friendId);
       console.log(`친구를 방에서 제거했습니다.`);
     };
 
@@ -238,7 +245,13 @@ export default {
 
 <style scoped> 
 .friend-list{
-  overflow-y:scroll; 
-  height:500px; 
+  overflow-y: scroll; 
+  height: 500px; 
+}
+.friend-image {
+  object-fit: cover;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
 }
 </style>

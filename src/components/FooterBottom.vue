@@ -1,8 +1,6 @@
 <template>
-  <div class="height-adder">
 
-  </div>
-  <footer class="footer footer-panel ">
+  <footer class="footer footer-panel mt-5" >
     <div class="content has-text-centered">
       <div>
         © 2024 Swamp of Bugs. All Rights Reserved.
@@ -28,5 +26,6 @@ export default {
   background-color: #f5f5f5;
   color: #333;
   margin-top: auto;
+  
 }
 </style>

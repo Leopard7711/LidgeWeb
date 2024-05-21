@@ -1,15 +1,12 @@
 <template>
-  <div id="app" class="is-flex is-flex-direction-column is-justify-content-space-between" >
+  <div id="app" class="is-flex is-flex-direction-column">
     <NavbarTop></NavbarTop>
     <div class="background-panel has-background-warning-70"></div>
-
-    <!-- Content container might be needed for proper spacing -->
-    <div>
-      <router-view class="mt-5" />
-    </div>
-
+    <router-view class="mt-5"/>
+    
     <FooterBottom />
   </div>
+  
 </template>
 
 <script>
@@ -28,7 +25,7 @@ export default {
 <style>
 #app {
   text-align: center;
-  
+  min-height: 100vh;
 }
 @font-face {
   font-family: 'Pretendard-Regular';
@@ -38,7 +35,7 @@ export default {
 }
 body {
   font-family: 'Pretendard-Regular';
-
+  
   margin: 0;
 }
 .background-panel {

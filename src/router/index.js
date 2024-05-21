@@ -4,7 +4,7 @@ import RoomSettingView from '@/views/RoomSettingView.vue'
 import UserSettingView from '@/views/UserSettingView.vue'
 import CreateAccountView from '@/views/CreateAccountView.vue'
 import FriendView from '@/views/FriendView.vue'
-
+import RoomView from '@/views/RoomView.vue'
 
 const routes = [
   {
@@ -32,6 +32,12 @@ const routes = [
     name: 'friend',
     component: FriendView
   },
+  {
+    path: '/room/:roomId',
+    name: 'RoomView',
+    component: RoomView,
+    props: true, // roomId를 props로 전달합니다.
+  }
 ]
 
 const router = createRouter({

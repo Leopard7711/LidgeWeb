@@ -1,6 +1,6 @@
 <template>
   
-  <div class="container is-max-desktop static-height">
+  <div class="container is-max-desktop ">
     
     <div class="columns">
       <div class="column is-8">
@@ -20,21 +20,10 @@
       </div>
     </div>
     <div class="panel">
-      <p class="panel-heading">최근 기록</p>
-      <p class="px-4 py-4">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-        Ducimus culpa dolores veritatis tenetur animi possimus recusandae magni atque
-        vitae vero, minima obcaecati molestiae eveniet distinctio magnam esse, sit iure veniam!
-      </p>
+      <p class="panel-heading">내가 만든 방</p>
+      <MyRoom class="px-4 py-4"></MyRoom>
       </div>
-    <div class="panel">
-      <p class="panel-heading">공지사항</p>
-      <p class="px-4 py-4">
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-        Ducimus culpa dolores veritatis tenetur animi possimus recusandae magni atque
-        vitae vero, minima obcaecati molestiae eveniet distinctio magnam esse, sit iure veniam!
-      </p>
-    </div>
+  
 
 </div>
 
@@ -49,6 +38,7 @@ import LoginBox from "@/components/Login/LoginBox.vue";
 import UserBox from "@/components/Login/UserBox.vue"; 
 import RoomList from "@/components/RoomList.vue"; 
 import FriendList from "@/components/FriendList.vue";
+import MyRoom from "@/components/MyRoom.vue"
 
 export default {
   name: 'HomeView',
@@ -56,7 +46,8 @@ export default {
     LoginBox,
     UserBox,
     RoomList,
-    FriendList
+    FriendList,
+    MyRoom
   },
   setup() {
     const isLoggedIn = ref(false);
