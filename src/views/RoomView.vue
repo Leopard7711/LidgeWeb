@@ -7,8 +7,8 @@
             <p class="has-text-weight-bold">&lt; {{ roomName }} &gt;</p>
           </div>
           <div class="is-flex-grow-1 has-text-right" style="width: 10%;">
-            <button class="button is-light has-text-weight-bold mr-3" @click="goToMain">메인</button>
-            <button v-if="!isOwner" class="button is-danger has-text-weight-bold" @click="confirmLeaveRoom">방 퇴장</button>
+            <button class="button is-light has-text-weight-bold " @click="goToMain">메인</button>
+            <button v-if="!isOwner" class="button is-danger has-text-weight-bold ml-3" @click="confirmLeaveRoom">방 퇴장</button>
           </div>
         </div>
         <div v-if="participants.length === 0" class="has-text-grey is-flex is-justify-content-center is-align-items-center" style="height: 100%;">
@@ -137,8 +137,9 @@
       };
   
       const goToMain = () => {
-      router.push('/');
-        };
+        router.push('/');
+      };
+  
       const leaveRoom = async () => {
         const user = auth.currentUser;
         const roomDocRef = doc(db, 'rooms', props.roomId);
@@ -148,13 +149,17 @@
           participants: arrayRemove(user.uid)
         });
   
+        // 사용자 문서에서 방 ID 제거
+        await updateDoc(doc(db, 'users', user.uid), {
+          joinedRooms: arrayRemove(props.roomId)
+        });
+  
         // 참가자가 없는 방이라면 방 자체를 삭제하거나 다른 처리를 할 수 있음
         const roomDoc = await getDoc(roomDocRef);
         if (roomDoc.exists() && roomDoc.data().participants.length === 0) {
           await deleteDoc(roomDocRef);
         }
   
-        // 홈으로 리디렉션
         router.push('/');
       };
   
@@ -192,10 +197,11 @@
       };
   
       const confirmLeaveRoom = () => {
-      if (confirm('정말 방을 퇴장하시겠습니까?')) {
-        leaveRoom();
-      }
-    };
+        if (confirm('정말 방을 퇴장하시겠습니까?')) {
+          leaveRoom();
+        }
+      };
+  
       const confirmDelete = (imageId, imageName) => {
         if (confirm('이 사진을 삭제하시겠습니까?')) {
           deletePhoto(imageId, imageName);
@@ -240,6 +246,7 @@
     }
   };
   </script>
+  
   
   <style scoped>
   .panel-heading {

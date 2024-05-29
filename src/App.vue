@@ -2,7 +2,7 @@
   <div id="app" class="is-flex is-flex-direction-column">
     <NavbarTop></NavbarTop>
     <div class="background-panel has-background-warning-70"></div>
-    <router-view class="mt-5"/>
+    <router-view class="mt-5" style="height: 1000px;"/>
     
     <FooterBottom />
   </div>

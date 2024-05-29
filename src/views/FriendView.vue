@@ -334,7 +334,7 @@ export default {
 <style scoped>
 .user-list{
   overflow-y:scroll; 
-  height:200px; 
+  height:183px; 
 }
 .friend-list{
   overflow-y:scroll;

@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted,computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { db, auth } from '@/firebase';
 import { onAuthStateChanged } from "firebase/auth";
@@ -88,8 +88,10 @@ import {
   addDoc,
   serverTimestamp,
   doc,
+  updateDoc,
   getDoc,
-  deleteDoc,
+  arrayUnion,
+  deleteDoc
 } from 'firebase/firestore';
 
 export default {
@@ -173,7 +175,7 @@ export default {
         return;
       }
 
-      await addDoc(collection(db, 'rooms'), {
+      const roomDocRef = await addDoc(collection(db, 'rooms'), {
         name: roomName.value,
         password: roomPassword.value || "",
         ownerId: currentUserUid.value,
@@ -181,7 +183,17 @@ export default {
         timestamp: serverTimestamp()
       });
 
-      // 방 생성 후 입력 필드 초기화
+      await updateDoc(doc(db, 'users', currentUserUid.value), {
+        joinedRooms: arrayUnion(roomDocRef.id)
+      });
+
+      // 선택된 친구들 문서 업데이트
+      for (const friend of selectedFriends.value) {
+        await updateDoc(doc(db, 'users', friend.id), {
+          joinedRooms: arrayUnion(roomDocRef.id)
+        });
+      }
+
       roomName.value = '';
       roomPassword.value = '';
       selectedFriends.value = [];
@@ -242,6 +254,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped> 
 .friend-list{

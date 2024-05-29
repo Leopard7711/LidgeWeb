@@ -1,12 +1,12 @@
 <template>
   <div class="is-flex is-flex-direction-column is-align-items-center" style="height: 300px;">
-    <div v-if="!isAuthChecked" class="has-text-grey is-flex is-justify-content-center is-align-items-end" style="height: 100%; width: 100%;">
+    <div v-if="!isAuthChecked" class="has-text-grey is-flex is-justify-content-center is-align-items-end" style="height: 100%; ">
       <p class="is-size-5">로딩 중...</p>
     </div>
-    <div v-else-if="!currentUser" class="has-text-grey is-flex is-justify-content-center is-align-items-center" style="height: 100%; width: 100%;">
+    <div v-else-if="!currentUser" class="has-text-grey is-flex is-justify-content-center is-align-items-center" style="height: 100%;">
       <p class="is-size-5">로그인 해주세요</p>
     </div>
-    <div v-else-if="rooms.length === 0" class="has-text-grey is-flex is-justify-content-center is-align-items-center" style="height: 100%; width: 100%;">
+    <div v-else-if="rooms.length === 0" class="has-text-grey is-flex is-justify-content-center is-align-items-center" style="height: 100%;">
       <p class="is-size-5">생성한 방이 없습니다</p>
     </div>
     <div v-else class="box is-flex is-flex-direction-column is-justify-content-center" style="height: 100px; width: 100%;">

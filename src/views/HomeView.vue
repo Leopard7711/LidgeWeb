@@ -2,15 +2,15 @@
   
   <div class="container is-max-desktop ">
     
-    <div class="columns">
+    <div class="columns ">
       <div class="column is-8">
-        <div class="panel pb-4">
+        <div class="panel pb-4 ">
           <p class="panel-heading">진행중인 방</p>
           <RoomList></RoomList>
         </div>
       </div>
-      <div class="column is-4 is-flex is-flex-direction-column" >
-        <div class="panel p-4" style="height: 250px;">
+      <div class="column is-4 is-flex is-flex-direction-column pr-0" >
+        <div class="panel p-4 " style="height: 250px;">
           <LoginBox v-if="!isLoggedIn"></LoginBox>
           <UserBox v-else></UserBox>
         </div>
