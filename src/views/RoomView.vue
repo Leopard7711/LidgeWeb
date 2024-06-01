@@ -4,7 +4,7 @@
         <div class="panel-heading is-flex is-align-items-center is-justify-content-center">
           <div class="is-flex-grow-1" style="width: 10%;"></div>
           <div class="is-flex-grow-4 has-text-centered">
-            <p class="has-text-weight-bold">&lt; {{ roomName }} &gt;</p>
+            <p class="has-text-weight-bold is-size-4">&lt; {{roomName}} &gt;</p>
           </div>
           <div class="is-flex-grow-1 has-text-right" style="width: 10%;">
             <button class="button is-light has-text-weight-bold " @click="goToMain">메인</button>

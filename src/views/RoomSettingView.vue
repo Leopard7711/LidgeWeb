@@ -79,7 +79,7 @@
 import { ref, onMounted,computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { db, auth } from '@/firebase';
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged} from "firebase/auth";
 import {
   collection,
   query,
@@ -91,7 +91,8 @@ import {
   updateDoc,
   getDoc,
   arrayUnion,
-  deleteDoc
+  deleteDoc,
+  arrayRemove
 } from 'firebase/firestore';
 
 export default {
@@ -210,8 +211,24 @@ export default {
       }
 
       const roomDocRef = doc(db, 'rooms', querySnapshot.docs[0].id);
-      await deleteDoc(roomDocRef);
-      alert('방이 성공적으로 삭제되었습니다.');
+      const roomDoc = await getDoc(roomDocRef);
+
+      if (roomDoc.exists()) {
+        const roomData = roomDoc.data();
+        const participants = roomData.participants;
+
+        // 각 참가자의 joinedRooms 필드에서 방 ID 제거
+        await Promise.all(participants.map(async (participantId) => {
+          const userDocRef = doc(db, 'users', participantId);
+          await updateDoc(userDocRef, {
+            joinedRooms: arrayRemove(roomDocRef.id)
+          });
+        }));
+
+        // 방 삭제
+        await deleteDoc(roomDocRef);
+        alert('방이 성공적으로 삭제되었습니다.');
+      }
     };
 
     const inviteFriendToRoom = friendId => {

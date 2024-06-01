@@ -10,7 +10,7 @@
       <div class="control">
         <label class="radio">
           <input type="radio" name="roomFilter" value="my" v-model="selectedFilter">
-          내 방
+          내가 속한 방
         </label>
       </div>
     </div>
@@ -18,7 +18,7 @@
       <div v-for="room in filteredRooms" :key="room.id" class="box box-light mx-4 my-4 pl-5 is-flex is-justify-content-space-between">
         <div class="texts">
           <h2 class="is-size-4 has-text-weight-semibold has-text-left">{{ room.name }}</h2>
-          <p class="has-text-left">{{ room.participants.length }}명 입장 중</p>
+          <p class="has-text-left">{{ room.participants?.length || 0 }}명 입장 중</p>
         </div>
         <div class="buttons">
           <button class="button is-light" @click="enterRoom(room.id)"><p class="has-text-weight-semibold">입장</p></button>
