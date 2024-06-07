@@ -129,7 +129,7 @@ export default {
 .list {
   flex: 1;
   overflow-y: auto;
-  max-height: 160px;
+  max-height: 207px;
 }
 .friend-image {
     object-fit: cover;
