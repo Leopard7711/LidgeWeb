@@ -1,21 +1,26 @@
 <template>
   <div class="is-flex is-flex-direction-column is-align-items-center" style="height: 300px;">
-    <div v-if="!isAuthChecked" class="has-text-grey is-flex is-justify-content-center is-align-items-end" style="height: 100%; ">
+    <div v-if="!isAuthChecked" class="has-text-grey is-flex is-justify-content-center is-align-items-end"
+      style="height: 100%; ">
       <p class="is-size-5">로딩 중...</p>
     </div>
-    <div v-else-if="!currentUser" class="has-text-grey is-flex is-justify-content-center is-align-items-center" style="height: 100%;">
+    <div v-else-if="!currentUser" class="has-text-grey is-flex is-justify-content-center is-align-items-center"
+      style="height: 100%;">
       <p class="is-size-5">로그인 해주세요</p>
     </div>
-    <div v-else-if="rooms.length === 0" class="has-text-grey is-flex is-justify-content-center is-align-items-center" style="height: 100%;">
+    <div v-else-if="rooms.length === 0" class="has-text-grey is-flex is-justify-content-center is-align-items-center"
+      style="height: 100%;">
       <p class="is-size-5">생성한 방이 없습니다</p>
     </div>
-    <div v-else class="box is-flex is-flex-direction-column is-justify-content-center" style="height: 100px; width: 100%;">
+    <div v-else class="box is-flex is-flex-direction-column is-justify-content-center"
+      style="height: 100px; width: 100%;">
       <div class="is-flex is-align-items-center is-justify-content-center" style="position: relative; height: 100%;">
         <div class="is-flex-grow-1 has-text-centered">
           <p><strong class="is-size-4">{{ rooms[0].name }}</strong></p>
           <p>참여자: {{ rooms[0].participants.length }}명</p>
         </div>
-        <div class="buttons is-flex is-align-items-end" style="position: absolute; right:0rem; top: 50%; transform: translateY(-50%);">
+        <div class="buttons is-flex is-align-items-end"
+          style="position: absolute; right:0rem; top: 50%; transform: translateY(-50%);">
           <button class="button is-light has-text-weight-semibold" @click="enterRoom(rooms[0].id)">입장</button>
           <button class="button is-danger has-text-weight-semibold" @click="deleteRoom(rooms[0].id)">삭제</button>
         </div>
@@ -44,7 +49,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { db, auth } from '@/firebase';
-import { collection, query, where, getDocs, getDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDocs, getDoc, deleteDoc, doc, updateDoc, arrayRemove } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
 export default {
@@ -81,10 +86,29 @@ export default {
 
     const deleteRoom = async (roomId) => {
       try {
-        await deleteDoc(doc(db, 'rooms', roomId));
-        rooms.value = [];
-        alert('방이 삭제되었습니다.');
-        location.reload(); // 페이지 새로고침 추가
+        const roomDocRef = doc(db, 'rooms', roomId);
+        const roomDoc = await getDoc(roomDocRef);
+
+        if (roomDoc.exists()) {
+          const roomData = roomDoc.data();
+
+          // 참가자들의 joinedRooms 필드에서 roomId 제거
+          for (const participantId of roomData.participants) {
+            const userDocRef = doc(db, 'users', participantId);
+            await updateDoc(userDocRef, {
+              joinedRooms: arrayRemove(roomId)
+            });
+          }
+
+          // 방 문서 삭제
+          await deleteDoc(roomDocRef);
+
+          rooms.value = [];
+          alert('방이 삭제되었습니다.');
+          location.reload(); // 페이지 새로고침 추가
+        } else {
+          alert('방을 찾을 수 없습니다.');
+        }
       } catch (error) {
         console.error('Error deleting room:', error);
         alert('방 삭제에 실패하였습니다.');
@@ -123,19 +147,31 @@ export default {
   width: 100%;
   background-color: #fff;
 }
+
 .table {
-  background-color: #f5f5f5; /* 회색 배경 */
-  color: #333; /* 텍스트 색상 */
-  border: 1px solid #ccc; /* 테두리 색상 */
+  background-color: #f5f5f5;
+  /* 회색 배경 */
+  color: #333;
+  /* 텍스트 색상 */
+  border: 1px solid #ccc;
+  /* 테두리 색상 */
 }
+
 .table th {
-  background-color: #e0e0e0; /* 헤더 배경 색상 */
-  color: #333; /* 헤더 텍스트 색상 */
-  border: 1px solid #ccc; /* 헤더 테두리 색상 */
+  background-color: #e0e0e0;
+  /* 헤더 배경 색상 */
+  color: #333;
+  /* 헤더 텍스트 색상 */
+  border: 1px solid #ccc;
+  /* 헤더 테두리 색상 */
 }
+
 .table td {
-  background-color: #fafafa; /* 셀 배경 색상 */
-  color: #333; /* 셀 텍스트 색상 */
-  border: 1px solid #ccc; /* 셀 테두리 색상 */
+  background-color: #fafafa;
+  /* 셀 배경 색상 */
+  color: #333;
+  /* 셀 텍스트 색상 */
+  border: 1px solid #ccc;
+  /* 셀 테두리 색상 */
 }
 </style>
