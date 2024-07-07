@@ -1,5 +1,4 @@
 <template>
-  
   <p class="has-text-weight-bold">친구 목록</p>
   <div v-if="!currentUser" class="is-flex is-align-items-center" style="height: 100%;">
     <div class="is-flex-grow-1">
@@ -12,17 +11,18 @@
     </div>
   </div>
   <div v-else class="list mt-1" style="width: 100%;">
-    <div v-for="friend in friends" :key="friend.id" class="list-item is-flex is-align-items-center is-justify-content-space-between">
+    <div v-for="friend in friends" :key="friend.id"
+      class="list-item is-flex is-align-items-center is-justify-content-space-between">
       <div class="is-flex is-align-items-center">
-          <figure class="image is-32x32">
-              <img class="is-rounded friend-image" :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=User'" alt="Friend Image">
-          </figure>
+        <figure class="image is-32x32">
+          <img class="is-rounded friend-image"
+            :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=User'" alt="Friend Image">
+        </figure>
       </div>
       <p class="ml-3 has-text-weight-semibold">{{ friend.name }}</p>
       <button class="delete" @click="deleteFriend(friend.id)"></button>
     </div>
   </div>
-  
 </template>
 
 <script>
@@ -47,7 +47,7 @@ export default {
         getDocs(friendsQuery2)
       ]);
 
-      const friendsData = [...firstQuerySnapshot.docs, ...secondQuerySnapshot.docs].map(async docSnapshot => {
+      const friendsDataPromises = [...firstQuerySnapshot.docs, ...secondQuerySnapshot.docs].map(async docSnapshot => {
         const friendData = docSnapshot.data();
         const otherUserId = friendData.userId1 === currentUserUid ? friendData.userId2 : friendData.userId1;
 
@@ -55,18 +55,17 @@ export default {
         const userDocSnapshot = await getDoc(userDocRef);
 
         if (userDocSnapshot.exists()) {
-          const userData = {
+          return {
             id: userDocSnapshot.id,
             name: userDocSnapshot.data().name,
             email: userDocSnapshot.data().email,
             photoURL: userDocSnapshot.data().photoURL // 친구의 photoURL 추가
           };
-          return userData;
         }
         return null;
       });
 
-      const loadedFriends = await Promise.all(friendsData);
+      const loadedFriends = await Promise.all(friendsDataPromises);
 
       friends.value = loadedFriends.filter(friend => friend !== null);
     };
@@ -82,13 +81,11 @@ export default {
           getDocs(friendsQuery2)
         ]);
 
-        for (const docSnapshot of friendsSnapshot1.docs) {
-          await deleteDoc(doc(db, 'friends', docSnapshot.id));
-        }
+        const deletePromises = [...friendsSnapshot1.docs, ...friendsSnapshot2.docs].map(docSnapshot =>
+          deleteDoc(doc(db, 'friends', docSnapshot.id))
+        );
 
-        for (const docSnapshot of friendsSnapshot2.docs) {
-          await deleteDoc(doc(db, 'friends', docSnapshot.id));
-        }
+        await Promise.all(deletePromises);
 
         // Update the local list after deletion
         await fetchFriends();
@@ -131,10 +128,11 @@ export default {
   overflow-y: auto;
   max-height: 207px;
 }
+
 .friend-image {
-    object-fit: cover;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+  object-fit: cover;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
 }
 </style>

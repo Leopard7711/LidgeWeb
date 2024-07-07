@@ -8,7 +8,7 @@
         <div class="control">
           <input class="input" type="text" placeholder="방 이름" v-model="roomName">
           <input class="input mt-2" type="password" placeholder="방 비밀번호 (선택)" v-model="roomPassword">
-          <button class="button is-primary mt-3" @click="createRoom">
+          <button class="button is-info mt-3" @click="createRoom">
             <span class="has-text-weight-semibold">방 생성</span>
           </button>
           <button class="button is-light mt-3 ml-3" @click="removeRoom">
@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- 친구 초대 섹션 -->
     <div class="columns">
       <!-- 입장한 친구 목록 -->
@@ -31,10 +31,12 @@
             </div>
           </div>
           <div v-else class="list friend-list">
-            <div class="list-item ml-2 mr-2 is-flex is-align-items-center is-justify-content-space-between" v-for="friend in joinedFriends" :key="friend.id">
+            <div class="list-item ml-2 mr-2 is-flex is-align-items-center is-justify-content-space-between"
+              v-for="friend in joinedFriends" :key="friend.id">
               <div class="is-flex is-align-items-center">
                 <figure class="image is-64x64">
-                  <img class="is-rounded friend-image" :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
+                  <img class="is-rounded friend-image"
+                    :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
                 </figure>
               </div>
               <div class="list-item-content">
@@ -59,14 +61,16 @@
             <div class="list-item ml-2 mr-2" v-for="friend in availableFriends" :key="friend.id">
               <div class="list-item-image">
                 <figure class="image is-64x64">
-                  <img class="is-rounded friend-image" :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
+                  <img class="is-rounded friend-image"
+                    :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
                 </figure>
               </div>
               <div class="list-item-content">
                 <div class="list-item-title is-size-5 has-text-weight-semibold">{{ friend.name }}</div>
                 <div class="list-item-description">{{ friend.email }}</div>
               </div>
-              <button class="button is-danger ml-2" @click="inviteFriendToRoom(friend.id)">추가</button>
+              <button class="button has-text-weight-semibold is-danger ml-2"
+                @click="inviteFriendToRoom(friend.id)">추가</button>
             </div>
           </div>
         </div>
@@ -76,10 +80,10 @@
 </template>
 
 <script>
-import { ref, onMounted,computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { db, auth } from '@/firebase';
-import { onAuthStateChanged} from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,
   query,
@@ -134,7 +138,7 @@ export default {
         getDocs(friendsQuery2)
       ]);
 
-      const friendIds = new Set(); 
+      const friendIds = new Set();
       firstQuerySnapshot.docs.concat(secondQuerySnapshot.docs).forEach(doc => {
         const data = doc.data();
         friendIds.add(data.userId1 === currentUserUid.value ? data.userId2 : data.userId1);
@@ -189,11 +193,13 @@ export default {
       });
 
       // 선택된 친구들 문서 업데이트
-      for (const friend of selectedFriends.value) {
-        await updateDoc(doc(db, 'users', friend.id), {
+      const friendUpdates = selectedFriends.value.map(friend => {
+        return updateDoc(doc(db, 'users', friend.id), {
           joinedRooms: arrayUnion(roomDocRef.id)
         });
-      }
+      });
+
+      await Promise.all(friendUpdates);
 
       roomName.value = '';
       roomPassword.value = '';
@@ -218,12 +224,14 @@ export default {
         const participants = roomData.participants;
 
         // 각 참가자의 joinedRooms 필드에서 방 ID 제거
-        await Promise.all(participants.map(async (participantId) => {
+        const participantUpdates = participants.map(participantId => {
           const userDocRef = doc(db, 'users', participantId);
-          await updateDoc(userDocRef, {
+          return updateDoc(userDocRef, {
             joinedRooms: arrayRemove(roomDocRef.id)
           });
-        }));
+        });
+
+        await Promise.all(participantUpdates);
 
         // 방 삭제
         await deleteDoc(roomDocRef);
@@ -272,12 +280,12 @@ export default {
 };
 </script>
 
-
-<style scoped> 
-.friend-list{
-  overflow-y: scroll; 
-  height: 500px; 
+<style scoped>
+.friend-list {
+  overflow-y: scroll;
+  height: 500px;
 }
+
 .friend-image {
   object-fit: cover;
   width: 64px;

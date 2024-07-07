@@ -10,14 +10,16 @@
           </span>
         </p>
       </div>
-      <div v-if="filteredUsers.length === 0" class="user-list has-text-grey is-flex is-justify-content-center is-align-items-center">
+      <div v-if="filteredUsers.length === 0"
+        class="user-list has-text-grey is-flex is-justify-content-center is-align-items-center">
         <p class="is-size-5">찾을 유저를 입력해주세요</p>
       </div>
       <div v-else class="list user-list">
         <div class="list-item ml-4 mr-4" v-for="user in filteredUsers" :key="user.id">
           <div class="list-item-image">
             <figure class="image is-64x64">
-              <img class="is-rounded user-image" :src="user.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
+              <img class="is-rounded user-image"
+                :src="user.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
             </figure>
           </div>
           <div class="list-item-content">
@@ -34,14 +36,16 @@
       <div class="column">
         <div class="panel pb-4">
           <p class="panel-heading"><span class="has-text-weight-semibold">친구 리스트</span></p>
-          <div v-if="friends.length === 0" class="has-text-grey friend-request-list is-flex is-justify-content-center is-align-items-center">
+          <div v-if="friends.length === 0"
+            class="has-text-grey friend-request-list is-flex is-justify-content-center is-align-items-center">
             <p class="is-size-5">친구가 없습니다</p>
           </div>
           <div v-else class="list friend-list">
             <div class="list-item ml-2 mr-2" v-for="friend in friends" :key="friend.id">
               <div class="is-flex is-align-items-center">
                 <figure class="image is-64x64">
-                  <img class="is-rounded friend-image" :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
+                  <img class="is-rounded friend-image"
+                    :src="friend.photoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
                 </figure>
               </div>
               <div class="list-item-content">
@@ -56,22 +60,26 @@
       <div class="column">
         <div class="panel pb-4">
           <p class="panel-heading"><span class="has-text-weight-semibold">친구 요청</span></p>
-          <div v-if="incomingRequests.length === 0" class="has-text-grey friend-request-list is-flex is-justify-content-center is-align-items-center">
+          <div v-if="incomingRequests.length === 0"
+            class="has-text-grey friend-request-list is-flex is-justify-content-center is-align-items-center">
             <p class="is-size-5">친구 요청이 없습니다</p>
           </div>
           <div v-else class="list friend-request-list">
             <div class="list-item ml-2 mr-2" v-for="request in incomingRequests" :key="request.id">
               <div class="list-item-image">
                 <figure class="image is-64x64">
-                  <img class="is-rounded request-image" :src="request.senderPhotoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
+                  <img class="is-rounded request-image"
+                    :src="request.senderPhotoURL || 'https://via.placeholder.com/128x128.png?text=Image'">
                 </figure>
               </div>
               <div class="list-item-content">
                 <div class="list-item-title is-size-5 has-text-weight-semibold">{{ request.senderName }}</div>
                 <div class="list-item-description">{{ request.senderEmail }}</div>
               </div>
-              <button class="button is-danger ml-2" @click="acceptRequest(request.id)">수락</button>
-              <button class="button is-light ml-2" @click="declineRequest(request.id)">거절</button>
+              <button class="button has-text-weight-semibold is-danger ml-2"
+                @click="acceptRequest(request.id)">수락</button>
+              <button class="button has-text-weight-semibold is-light ml-2"
+                @click="declineRequest(request.id)">거절</button>
             </div>
           </div>
         </div>
@@ -135,7 +143,7 @@ export default {
         getDocs(friendsQuery2)
       ]);
 
-      const friendsData = [...firstQuerySnapshot.docs, ...secondQuerySnapshot.docs].map(async docSnapshot => {
+      const friendsDataPromises = [...firstQuerySnapshot.docs, ...secondQuerySnapshot.docs].map(async docSnapshot => {
         const friendData = docSnapshot.data();
         const otherUserId = friendData.userId1 === currentUserUid ? friendData.userId2 : friendData.userId1;
 
@@ -143,19 +151,17 @@ export default {
         const userDocSnapshot = await getDoc(userDocRef);
 
         if (userDocSnapshot.exists()) {
-          const userData = {
+          return {
             id: userDocSnapshot.id,
             name: userDocSnapshot.data().name,
             email: userDocSnapshot.data().email,
             photoURL: userDocSnapshot.data().photoURL || ''
           };
-          return userData;
         }
         return null;
       });
 
-      const loadedFriends = await Promise.all(friendsData);
-
+      const loadedFriends = await Promise.all(friendsDataPromises);
       friends.value = loadedFriends.filter(friend => friend !== null);
     };
 
@@ -191,21 +197,21 @@ export default {
       if (!currentUser.value) return;
       const q = query(collection(db, 'friendRequests'), where('receiverId', '==', currentUser.value.uid));
       unsubscribeRequests = onSnapshot(q, async (snapshot) => {
-        const requests = [];
-        for (const requestDoc of snapshot.docs) {
+        const requestsPromises = snapshot.docs.map(async requestDoc => {
           const userDocRef = doc(db, 'users', requestDoc.data().senderId);
           const userDoc = await getDoc(userDocRef);
           if (userDoc.exists()) {
-            requests.push({
+            return {
               id: requestDoc.id,
               senderId: requestDoc.data().senderId,
               senderName: userDoc.data().name,
               senderEmail: userDoc.data().email,
               senderPhotoURL: userDoc.data().photoURL || ''
-            });
+            };
           }
-        }
-        incomingRequests.value = requests;
+          return null;
+        });
+        incomingRequests.value = (await Promise.all(requestsPromises)).filter(request => request !== null);
       });
     };
 
@@ -330,21 +336,26 @@ export default {
   }
 };
 </script>
-  
+
 <style scoped>
-.user-list{
-  overflow-y:scroll; 
-  height:183px; 
+.user-list {
+  overflow-y: scroll;
+  height: 183px;
 }
-.friend-list{
-  overflow-y:scroll;
+
+.friend-list {
+  overflow-y: scroll;
   height: 400px;
 }
-.friend-request-list{
-  overflow-y:scroll; 
+
+.friend-request-list {
+  overflow-y: scroll;
   height: 400px;
 }
-.user-image, .friend-image, .request-image {
+
+.user-image,
+.friend-image,
+.request-image {
   object-fit: cover;
   width: 64px;
   height: 64px;

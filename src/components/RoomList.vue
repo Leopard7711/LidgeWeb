@@ -15,14 +15,19 @@
       </div>
     </div>
     <div class="room-list">
-      <div v-for="room in filteredRooms" :key="room.id" class="box box-light mx-4 my-4 pl-5 is-flex is-justify-content-space-between">
+      <div v-for="room in filteredRooms" :key="room.id"
+        class="box box-light mx-4 my-4 pl-5 is-flex is-justify-content-space-between">
         <div class="texts">
           <h2 class="is-size-4 has-text-weight-semibold has-text-left">{{ room.name }}</h2>
           <p class="has-text-left">{{ room.participants?.length || 0 }}명 입장 중</p>
         </div>
         <div class="buttons">
-          <button class="button is-light" @click="enterRoom(room.id)"><p class="has-text-weight-semibold">입장</p></button>
-          <button class="button is-primary" @click="joinRoom(room.id)"><p class="has-text-weight-semibold">참가</p></button>
+          <button class="button is-light" @click="enterRoom(room.id)">
+            <p class="has-text-weight-semibold">입장</p>
+          </button>
+          <button class="button is-primary" @click="joinRoom(room.id)">
+            <p class="has-text-weight-semibold">참가</p>
+          </button>
         </div>
       </div>
     </div>
@@ -103,18 +108,17 @@ export default {
           alert('방의 참가 인원이 가득 찼습니다.');
           return;
         }
-        
+
         await updateDoc(roomDocRef, {
           participants: arrayUnion(currentUser.value.uid)
         });
-        
+
         await updateDoc(doc(db, 'users', currentUser.value.uid), {
           joinedRooms: arrayUnion(roomId)
         });
 
         alert('참가되었습니다.');
-        fetchRooms();
-        fetchMyRooms();
+        await Promise.all([fetchRooms(), fetchMyRooms()]);
       } else {
         alert('방을 찾을 수 없습니다.');
       }
@@ -125,17 +129,17 @@ export default {
     });
 
     onMounted(() => {
-      const unsubscribeAuth = auth.onAuthStateChanged(user => {
+      const unsubscribeAuth = auth.onAuthStateChanged(async (user) => {
         if (user) {
           currentUser.value = user;
-          fetchMyRooms();
+          await Promise.all([fetchRooms(), fetchMyRooms()]);
         } else {
           currentUser.value = null;
+          await fetchRooms();
         }
-        fetchRooms();
       });
-      
-      return () => unsubscribeAuth(); // Clean up the subscription on component unmount
+
+      return () => unsubscribeAuth();
     });
 
     return {
